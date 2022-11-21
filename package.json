@@ -19,5 +19,9 @@
   "homepage": "https://github.com/jacobporci/managedapp-coding-test#readme",
   "dependencies": {
     "jest": "^29.3.1"
-  }
+  },
+  "engines": {
+    "node": ">17.0.0"
+  },
+  "engineStrict": true
 }

@@ -26,6 +26,10 @@ c) 3/1/1989 to 3/8/1983 2036 days
 
 # How to run
 
+## Requirements
+
+- Node version 17 and up
+
 ## start
 
 Run command in terminal: `yarn start` or `npm start`
