@@ -105,7 +105,6 @@ const getDaysBetween = (date1, date2) => {
   dayDiff = dayDiff === 0 ? dayDiff : dayDiff - 1;
 
   const result = dayDiff + monthDiffInDays + yearDiffInDays;
-  console.log("Days between ", date1, " and ", date2, " is ", result);
 
   return result;
 };

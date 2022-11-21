@@ -1,5 +1,5 @@
 const readline = require("readline/promises");
-const { stdin: input, stdout: output } = require("process");
+const { stdin: input, stdout: output, stdout } = require("process");
 const { getDaysBetween, validate } = require("./utils.js");
 
 const getDateInput = async (question) => {
@@ -17,9 +17,11 @@ const getDateInput = async (question) => {
 };
 
 (async () => {
-  const input1 = await getDateInput("Date 1: ");
-  const input2 = await getDateInput("Date 2: ");
+  const date1 = await getDateInput("Date 1: ");
+  const date2 = await getDateInput("Date 2: ");
 
-  getDaysBetween(input1, input2);
+  const daysBetween = getDaysBetween(date1, date2);
+  console.log("Days between ", date1, " and ", date2, " is ", daysBetween);
+
   process.exit();
 })();
