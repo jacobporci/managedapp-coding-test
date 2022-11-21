@@ -17,13 +17,11 @@ const getDateInput = async (question) => {
 };
 
 (async () => {
-  try {
-  } catch (error) {}
   const input1 = await getDateInput("Date 1: ");
   const input2 = await getDateInput("Date 2: ");
   console.log({ input1, input2 });
 
-  const result = getDaysBetween(input1, input2);
+  getDaysBetween(input1, input2);
 
   process.exit();
 })();
