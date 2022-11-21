@@ -37,15 +37,6 @@ const getDaysBetweenJSDateUtil = (date1, date2) => {
     ) /
       (1000 * 60 * 60 * 24) -
     1;
-
-  console.log(
-    "getDaysBetweenJSDateUtil():  Days between ",
-    date1,
-    " and ",
-    date2,
-    " is ",
-    result
-  );
   return result;
 };
 
@@ -78,7 +69,6 @@ const getDaysBetween = (date1, date2) => {
   const [[dayX, monthX, yearX], [dayY, monthY, yearY]] = getDates(date1, date2);
   // get year diff
   let yearDiff = yearY - yearX;
-  console.log("yearDiff: ", yearDiff);
   // exclude current years
   let yearDiffInDays = 0;
   if (yearDiff > 1) {
@@ -89,7 +79,6 @@ const getDaysBetween = (date1, date2) => {
   } else if (yearDiff === 1 && monthX === monthY && dayX === dayY) {
     yearDiffInDays = isLeapYear(yearX) ? 365 : 364;
   }
-  console.log("yearDiffInDays: ", yearDiffInDays);
 
   // get month diff
   let monthDiff = monthY < monthX ? 12 - monthX + monthY : monthY - monthX;
@@ -97,7 +86,6 @@ const getDaysBetween = (date1, date2) => {
   if (monthDiff !== 0) {
     monthDiff = monthDiff - 1;
   }
-  console.log("monthDiff: ", monthDiff);
   let monthDiffInDays = 0;
   for (let i = 1; i <= monthDiff; i++) {
     const month = monthX + i;
@@ -107,7 +95,6 @@ const getDaysBetween = (date1, date2) => {
         month === 12 ? month : month % 12
       ];
   }
-  console.log("monthDiffInDays: ", monthDiffInDays);
 
   let dayDiff = 0;
   if (monthX === monthY) {
@@ -116,7 +103,6 @@ const getDaysBetween = (date1, date2) => {
     dayDiff = daysInMonth(yearX)[monthX] - dayX + dayY;
   }
   dayDiff = dayDiff === 0 ? dayDiff : dayDiff - 1;
-  console.log("dayDiff: ", dayDiff);
 
   const result = dayDiff + monthDiffInDays + yearDiffInDays;
   console.log("Days between ", date1, " and ", date2, " is ", result);
@@ -150,4 +136,5 @@ module.exports = {
   parseDate,
   getDaysBetweenJSDateUtil,
   validate,
+  getDates,
 };
