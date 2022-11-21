@@ -17,8 +17,8 @@ const getDateInput = async (question) => {
 };
 
 (async () => {
-  const date1 = await getDateInput("Date 1: ");
-  const date2 = await getDateInput("Date 2: ");
+  const date1 = await getDateInput("Date 1(dd/mm/yyy): ");
+  const date2 = await getDateInput("Date 2(dd/mm/yyy): ");
 
   const daysBetween = getDaysBetween(date1, date2);
   console.log("Days between ", date1, " and ", date2, " is ", daysBetween);
