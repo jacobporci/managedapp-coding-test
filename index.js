@@ -1,170 +1,29 @@
-const readline = require("readline");
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const readline = require("readline/promises");
+const { stdin: input, stdout: output } = require("process");
+const { getDaysBetween, validate } = require("./utils.js");
 
-const isLeapYear = (year) => {
-  return year % 4 === 0;
-};
-const daysInFebruary = (year) => {
-  return isLeapYear(year) ? 29 : 28;
-};
-const daysInMonth = (year) => [
-  null,
-  31,
-  daysInFebruary(year),
-  31,
-  30,
-  31,
-  30,
-  30,
-  31,
-  30,
-  31,
-  30,
-  31,
-];
+const getDateInput = async (question) => {
+  const rl = readline.createInterface({ input, output });
+  const cin = await rl.question(question);
 
-const parseDate = (date) => {
-  const temp1 = date.split("/");
-  const day = parseInt(temp1[0]);
-  const month = parseInt(temp1[1]);
-  const year = parseInt(temp1[2]);
-
-  return [day, month, year];
-};
-
-const getDaysBetweenJSDateUtil = (date1, date2) => {
-  const [monthX, dayX, yearX] = parseDate(date1);
-  const [monthY, dayY, yearY] = parseDate(date2);
-
-  const formattedDate1 = `${dayX}/${monthX}/${yearX}`;
-  const formattedDate2 = `${dayY}/${monthY}/${yearY}`;
-
-  return (
-    Math.abs(
-      new Date(formattedDate1).getTime() - new Date(formattedDate2).getTime()
-    ) /
-      (1000 * 60 * 60 * 24) -
-    1
-  );
-};
-
-const getDates = (date1, date2) => {
-  const [dayX, monthX, yearX] = parseDate(date1);
-  const [dayY, monthY, yearY] = parseDate(date2);
-
-  const reversed = [
-    [dayY, monthY, yearY],
-    [dayX, monthX, yearX],
-  ];
-  if (yearX > yearY) {
-    return reversed;
+  if (validate(cin)) {
+    rl.close();
+    return cin;
+  } else {
+    console.log("Invalid date, please try again.");
+    rl.close();
+    return getDateInput(question);
   }
-  if (yearX === yearY) {
-    if (monthX > monthY) {
-      return reversed;
-    }
-    if (monthX === monthY) {
-      if (dayX > dayY) {
-        return reversed;
-      }
-    }
-  }
-
-  return reversed.reverse();
 };
 
-const getDaysBetween = (date1, date2) => {
-  const [[dayX, monthX, yearX], [dayY, monthY, yearY]] = getDates(date1, date2);
-  // get year diff
-  let yearDiff = yearY - yearX;
-  // exclude current years
-  if (yearDiff !== 0) {
-    yearDiff = yearDiff - 1;
-  }
-  console.log("yearDiff: ", yearDiff);
-  let yearDiffInDays = 0;
-  for (let i = yearX + 1; i < yearY; i++) {
-    yearDiffInDays = yearDiffInDays + (isLeapYear(i) ? 366 : 365);
-  }
-  console.log("yearDiffInDays: ", yearDiffInDays);
+(async () => {
+  try {
+  } catch (error) {}
+  const input1 = await getDateInput("Date 1: ");
+  const input2 = await getDateInput("Date 2: ");
+  console.log({ input1, input2 });
 
-  // get month diff
-  let monthDiff = monthY < monthX ? 12 - monthX + monthY : monthY - monthX;
-  // exclude current months
-  if (monthDiff !== 0) {
-    // 2 - 1 = 1
-    monthDiff = monthDiff - 1;
-  }
-  console.log("monthDiff: ", monthDiff);
-  let monthDiffInDays = 0;
-  for (let i = 1; i <= monthDiff; i++) {
-    const month = monthX + i;
-    monthDiffInDays =
-      monthDiffInDays +
-      daysInMonth(month <= 12 ? yearX : yearY)[
-        month === 12 ? month : month % 12
-      ];
-  }
-  console.log("monthDiffInDays: ", monthDiffInDays);
-  let dayDiff =
-    monthX === monthY
-      ? dayY - dayX - 1
-      : daysInMonth(yearX)[monthX] - dayX + dayY;
-
-  return dayDiff + monthDiffInDays + yearDiffInDays;
-};
-
-const validate = (date) => {
-  const dateArray = date.split("/");
-  if (dateArray.length === 3) {
-    const day = parseInt(dateArray[0]);
-    const month = parseInt(dateArray[1]);
-    const year = parseInt(dateArray[2]);
-    if (
-      [day, month, year].every((check) => !!check && typeof check === "number")
-    ) {
-      if (year >= 1900 && year <= 2999) {
-        if (month >= 1 && month <= 12) {
-          if (day >= 1 && day <= daysInMonth(year)[month]) {
-            return true;
-          }
-        }
-      }
-    }
-  }
-  return false;
-};
-
-let input1, input2;
-const ask = () => {
-  const ask2 = () => {
-    rl.question("Date 2: ", (data2) => {
-      if (validate(data2)) {
-        input2 = data2;
-        console.log(
-          "getDaysBetweenJSDateUtil",
-          getDaysBetweenJSDateUtil(input1, input2)
-        );
-        console.log("getDaysBetween", getDaysBetween(input1, input2));
-        process.exit();
-      } else {
-        console.log("try again");
-        ask2();
-      }
-    });
-  };
-
-  rl.question("Date 1: ", (data) => {
-    if (validate(data)) {
-      input1 = data;
-      ask2();
-    } else {
-      console.log("try again");
-      ask();
-    }
-  });
-};
-ask();
+  const result = getDaysBetween(input1, input2);
+  console.log("Days between: ", result);
+  process.exit();
+})();
