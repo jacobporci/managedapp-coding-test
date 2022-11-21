@@ -4,18 +4,6 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-rl.question("What is your name ? ", function (name) {
-  rl.question("Where do you live ? ", function (country) {
-    console.log(`${name}, is a citizen of ${country}`);
-    rl.close();
-  });
-});
-
-rl.on("close", function () {
-  console.log("\nBYE BYE !!!");
-  process.exit(0);
-});
-
 const isLeapYear = (year) => {
   return year % 4 === 0;
 };
@@ -38,31 +26,38 @@ const daysInMonth = (year) => [
   31,
 ];
 
-// const dayX = 3;
-// const dayY = 3;
+const parseDate = (date) => {
+  const temp1 = date.split("/");
+  const day = parseInt(temp1[0]);
+  const month = parseInt(temp1[1]);
+  const year = parseInt(temp1[2]);
 
-// const monthX = 8;
-// const monthY = 1;
-
-// const yearX = 1983;
-// const yearY = 1989;
+  return [day, month, year];
+};
 
 const getDaysBetweenJSDateUtil = (date1, date2) => {
-  console.log(new Date(date1), new Date(date2));
-  console.log(new Date(date1).getTime() - new Date(date2).getTime());
+  const [monthX, dayX, yearX] = parseDate(date1);
+  const [monthY, dayY, yearY] = parseDate(date2);
+
+  const formattedDate1 = `${dayX}/${monthX}/${yearX}`;
+  const formattedDate2 = `${dayY}/${monthY}/${yearY}`;
+
   return (
-    Math.abs(new Date(date1).getTime() - new Date(date2).getTime()) /
-    (1000 * 60 * 60 * 24)
+    Math.abs(
+      new Date(formattedDate1).getTime() - new Date(formattedDate2).getTime()
+    ) /
+      (1000 * 60 * 60 * 24) -
+    1
   );
 };
 
 const getDates = (date1, date2) => {
-  const [dayX, monthX, yearX] = date1.split("/");
-  const [dayY, monthY, yearY] = date2.split("/");
+  const [dayX, monthX, yearX] = parseDate(date1);
+  const [dayY, monthY, yearY] = parseDate(date2);
 
   const reversed = [
-    [parseInt(dayY), parseInt(monthY), parseInt(yearY)],
-    [parseInt(dayX), parseInt(monthX), parseInt(yearX)],
+    [dayY, monthY, yearY],
+    [dayX, monthX, yearX],
   ];
   if (yearX > yearY) {
     return reversed;
@@ -89,12 +84,12 @@ const getDaysBetween = (date1, date2) => {
   if (yearDiff !== 0) {
     yearDiff = yearDiff - 1;
   }
-  console.log(yearDiff);
+  console.log("yearDiff: ", yearDiff);
   let yearDiffInDays = 0;
   for (let i = yearX + 1; i < yearY; i++) {
     yearDiffInDays = yearDiffInDays + (isLeapYear(i) ? 366 : 365);
-    console.log(yearDiffInDays);
   }
+  console.log("yearDiffInDays: ", yearDiffInDays);
 
   // get month diff
   let monthDiff = monthY < monthX ? 12 - monthX + monthY : monthY - monthX;
@@ -103,7 +98,7 @@ const getDaysBetween = (date1, date2) => {
     // 2 - 1 = 1
     monthDiff = monthDiff - 1;
   }
-  console.log(monthDiff);
+  console.log("monthDiff: ", monthDiff);
   let monthDiffInDays = 0;
   for (let i = 1; i <= monthDiff; i++) {
     const month = monthX + i;
@@ -112,16 +107,64 @@ const getDaysBetween = (date1, date2) => {
       daysInMonth(month <= 12 ? yearX : yearY)[
         month === 12 ? month : month % 12
       ];
-    console.log(monthDiffInDays);
   }
+  console.log("monthDiffInDays: ", monthDiffInDays);
   let dayDiff =
     monthX === monthY
       ? dayY - dayX - 1
       : daysInMonth(yearX)[monthX] - dayX + dayY;
 
-  console.log(dayDiff, monthDiffInDays, yearDiffInDays);
   return dayDiff + monthDiffInDays + yearDiffInDays;
 };
 
-console.log(getDaysBetweenJSDateUtil("08/03/1983", "01/03/1989"));
-console.log(getDaysBetween("03/08/1983", "03/01/1989"));
+const validate = (date) => {
+  const dateArray = date.split("/");
+  if (dateArray.length === 3) {
+    const day = parseInt(dateArray[0]);
+    const month = parseInt(dateArray[1]);
+    const year = parseInt(dateArray[2]);
+    if (
+      [day, month, year].every((check) => !!check && typeof check === "number")
+    ) {
+      if (year >= 1900 && year <= 2999) {
+        if (month >= 1 && month <= 12) {
+          if (day >= 1 && day <= daysInMonth(year)[month]) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+};
+
+let input1, input2;
+const ask = () => {
+  const ask2 = () => {
+    rl.question("Date 2: ", (data2) => {
+      if (validate(data2)) {
+        input2 = data2;
+        console.log(
+          "getDaysBetweenJSDateUtil",
+          getDaysBetweenJSDateUtil(input1, input2)
+        );
+        console.log("getDaysBetween", getDaysBetween(input1, input2));
+        process.exit();
+      } else {
+        console.log("try again");
+        ask2();
+      }
+    });
+  };
+
+  rl.question("Date 1: ", (data) => {
+    if (validate(data)) {
+      input1 = data;
+      ask2();
+    } else {
+      console.log("try again");
+      ask();
+    }
+  });
+};
+ask();
