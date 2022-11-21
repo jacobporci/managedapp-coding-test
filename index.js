@@ -24,6 +24,6 @@ const getDateInput = async (question) => {
   console.log({ input1, input2 });
 
   const result = getDaysBetween(input1, input2);
-  console.log("Days between: ", result);
+
   process.exit();
 })();
