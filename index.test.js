@@ -2,6 +2,8 @@ const {
   getDaysBetween,
   getDaysBetweenJSDateUtil,
   validate,
+  getDates,
+  parseDate,
 } = require("./utils.js");
 
 describe("getDaysBetween", () => {
@@ -24,5 +26,16 @@ describe("validate", () => {
     ["1", "a", "$", "1/1/1899", "1/1/3000"].forEach((date) => {
       expect(validate(date)).not.toBeTruthy();
     });
+  });
+});
+
+describe("getDates", () => {
+  it("should return reverse date1 and date2 if date1 is later than date2", () => {
+    const date1 = "1/1/2001";
+    const date2 = "1/1/2001";
+    expect(getDates(date1, date2)).toEqual([
+      parseDate(date2),
+      parseDate(date1),
+    ]);
   });
 });
